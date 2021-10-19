@@ -1,0 +1,70 @@
+clc,clear,close all;
+
+%% Reading the audio file
+
+[y,Fs]=audioread('voice.wav');
+%sound(y,Fs);
+
+y_spec = abs(fft(y));
+y_maxspec = max(y_spec)
+
+%% Specify Time
+
+N=size(y);
+ts=1/Fs;
+tmax=(N-1)*ts;
+t=0:ts:tmax;
+
+
+
+%% Plot Frequency Spectrum
+
+hold on
+subplot(2,2,1)
+plot(t,y)                           
+
+xlabel('Time(S)')
+ylabel('Amplitude')
+title('Sound Wave')
+
+subplot(2,2,2)
+plot(t,y_spec)                      
+
+xlabel('Time(S)')
+ylabel('Frequency(Hz)') 
+title('Frequency Spectrum')
+
+
+
+%% Downsampling
+
+m=3;
+yd1= downsample(y,m);
+fd=Fs/m;                            % downsampled freq.
+soundsc(yd1,fd)
+
+% plot
+
+np = 1000;
+subplot(2,2,3)                     
+stem(t(1:m:np),yd1(1:ceil(np/m)),'b')
+title(['Freq(Downsampling)= ', num2str(fd)])
+xlabel('Time(S)')
+ylabel('Frequency(Hz)')
+y_maxdown=max(yd1)
+%% Decimate
+
+m=3;
+yd2= decimate(y,m);
+fd=Fs/m;                          % downsampled freq.
+%soundsc(yd2,fd)
+
+% plot
+
+np = 1000;
+subplot(2,2,4)
+stem(t(1:m:np),yd2(1:ceil(np/m)),'b')
+title(['Freq(Decimate)= ', num2str(fd)])
+xlabel('Time(S)')
+ylabel('Frequency(Hz)')
+y_maxdec=max(yd2)
